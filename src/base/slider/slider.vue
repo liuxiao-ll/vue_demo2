@@ -43,9 +43,28 @@
           this._play()
         }
       }, 20)
+
+      window.addEventListener('resize', () => {
+        if (!this.slider) {
+          return
+        }
+        this._setSliderWidth(true)
+        this.slider.refresh()
+      })
+    },
+    activated() {
+      if (this.autoPlay) {
+        this._play()
+      }
+    },
+    deactivated() {
+      clearTimeout(this.timer)
+    },
+    beforeDestroy() {
+      clearTimeout(this.timer)
     },
     methods: {
-      _setSliderWidth() {
+      _setSliderWidth(isreasize) {
         this.children = this.$refs.sliderGroup.children
         let width = 0
         let sliderWidth = this.$refs.slider.clientWidth
@@ -55,7 +74,7 @@
           child.style.width = sliderWidth + 'px'
           width += sliderWidth
         }
-        if (this.loop) {
+        if (this.loop && !isreasize) {
           width += 2 * sliderWidth
         }
         this.$refs.sliderGroup.style.width = width + 'px'
@@ -72,6 +91,9 @@
         })
         this.slider.on('scrollEnd', () => {
           let PageIndex = this.slider.getCurrentPage().pageX
+          if (this.loop) {
+            PageIndex -= 1
+          }
           this.currentPageIndex = PageIndex
           if (this.autoPlay) {
             this._play()
@@ -88,6 +110,9 @@
       },
       _play() {
         let PageIndex = this.currentPageIndex + 1
+        if (this.loop) {
+          PageIndex += 1
+        }
         this.timer = setTimeout(() => {
           this.slider.goToPage(PageIndex, 0, 400)
         }, this.interval)

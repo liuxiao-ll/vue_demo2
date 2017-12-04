@@ -10,6 +10,7 @@ const opn = require('opn')
 const path = require('path')
 const express = require('express')
 const webpack = require('webpack')
+const axios = require('axios')
 const proxyMiddleware = require('http-proxy-middleware')
 const webpackConfig = (process.env.NODE_ENV === 'testing' || process.env.NODE_ENV === 'production')
   ? require('./webpack.prod.conf')
@@ -25,29 +26,20 @@ const proxyTable = config.dev.proxyTable
 
 const app = express()
 
-const apiRoutes = express.Router()
-const appData = require('../data.json')
-let seller = appData.seller
-let goods = appData.goods
-let ratings = appData.ratings
+var apiRoutes = express.Router()
 
-apiRoutes.get('/seller', function (req, res) {
-  res.json({
-    errno: 0,
-    data: seller
-  })
-})
-
-apiRoutes.get('/goods', function (req, res) {
-  res.json({
-    errno: 0,
-    data: goods
-  })
-})
-apiRoutes.get('/rating', function (req, res) {
-  res.json({
-    errno: 0,
-    data: ratings
+apiRoutes.get('/getDiscList', function (req, res) {
+  var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+  axios.get(url, {
+    headers: {
+      referer: 'https://c.y.qq.com/',
+      host: 'c.y.qq.com'
+    },
+    params: req.query
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
   })
 })
 
