@@ -26,8 +26,7 @@
       _getSingerList() {
         getSingerList().then((res) => {
           if (res.code === ERR_OK) {
-            this.singers = res.data.list
-            console.log(this._normalizeSinger(this.singers))
+            this.singers = this._normalizeSinger(res.data.list)
           }
         })
       },
@@ -44,20 +43,33 @@
               id: item.Fsinger_mid,
               name: item.Fsinger_name
             }))
-            const key = item.Findex
-            if (!map[key]) {
-              map[key] = {
-                title: key,
-                items: []
-              }
-            }
-            map[key].items.push(new Singer({
-              id: item.Fsinger_mid,
-              name: item.Fsinger_name
-            }))
           }
+          const key = item.Findex
+          if (!map[key]) {
+            map[key] = {
+              title: key,
+              items: []
+            }
+          }
+          map[key].items.push(new Singer({
+            id: item.Fsinger_mid,
+            name: item.Fsinger_name
+          }))
         })
-        console.log(map)
+        let hot = []
+        let ret = []
+        for (let key in map) {
+          let val = map[key]
+          if (val.title.match(/[a-zA-Z]/)) {
+            ret.push(val)
+          } else if (val.title === HONT_NAME) {
+            hot.push(val)
+          }
+        }
+        ret.sort((a, b) => {
+          return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+        })
+        return hot.concat(ret)
       }
     }
   }
