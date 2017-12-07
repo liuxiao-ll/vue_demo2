@@ -1,6 +1,6 @@
 <template>
   <div class="singer" ref="singer">
-    singer
+    <listview :data="singers"></listview>
   </div>
 </template>
 
@@ -8,6 +8,7 @@
   import {getSingerList} from '../../api/singer'
   import {ERR_OK} from '../../api/config'
   import Singer from '../../common/js/singer'
+  import listview from '../../base/listview/listview'
   const HONT_NAME = '热门'
   const HONT_NAME_LEN = 10
 
@@ -16,6 +17,9 @@
       return {
         singers: []
       }
+    },
+    components: {
+      listview
     },
     created() {
       setTimeout(() => {
