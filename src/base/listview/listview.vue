@@ -21,12 +21,16 @@
     <div class="list-fixed" v-show="scrollY <= 0" ref="fixed">
       <h1 class="fixed-title">{{fixedtitle}}</h1>
     </div>
+    <div v-show="!data.length" class="loading-container">
+      <loading></loading>
+    </div>
   </scroll>
 </template>
 
 <script>
   import scroll from '../scroll/scroll'
   import {getData} from '../../common/js/dom.js'
+  import loading from '../loading/loading'
   const ANCHOR_HEIGHT = 18
   export default {
     created() {
@@ -49,7 +53,8 @@
       }
     },
     components: {
-      scroll
+      scroll,
+      loading
     },
     computed: {
       shortcutList() {
@@ -128,9 +133,11 @@
       },
       diff(newVal) {
         let fixedTop = (newVal > 0 && newVal < 30) ? newVal - 30 : 0
-        if(this.fixedTop === fixedTop) {
+        if (this.fixedTop === fixedTop) {
           return
         }
+        this.fixedTop = fixedTop
+        this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
       }
     }
   }
