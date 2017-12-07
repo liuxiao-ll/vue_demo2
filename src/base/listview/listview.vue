@@ -67,6 +67,7 @@
       }
     },
     methods: {
+      // touch开始的事件
       onShortcutTouchStart(e) {
         let anchorIndex = getData(e.target, 'index')
         let firstTouch = e.touches[0]
@@ -80,6 +81,7 @@
         }
         this.$refs.listview.scrollToElement(this.$refs.listgroup[anchorIndex], 1000)
       },
+      // touch进行事件
       onShortcutTouchMove(e) {
         let firstTouch = e.touches[0]
         this.touch.y2 = firstTouch.pageY
@@ -92,9 +94,11 @@
         }
         this.$refs.listview.scrollToElement(this.$refs.listgroup[anchorIndex], 10)
       },
+      // scroll组件返回的滑动距离
       scroll(pos) {
         this.scrollY = pos.y
       },
+      // 创建每个块的高度数组
       _calcu() {
         this.listHeight = []
         const list = this.$refs.listgroup
