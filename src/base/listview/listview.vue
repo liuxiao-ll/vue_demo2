@@ -4,7 +4,7 @@
       <li v-for="group in data" class="list-group" ref="listgroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li v-for="item in group.items" class="list-group-item">
+          <li v-for="item in group.items" class="list-group-item" @click="selectItem(item)">
             <img v-lazy="item.avatar" alt="" class="avatar">
             <span class="name">{{item.name}}</span>
           </li>
@@ -108,14 +108,19 @@
           height += this.$refs.listgroup[i].clientHeight
           this.listHeight.push(height)
         }
+      },
+      selectItem(item) {
+        this.$emit('select', item)
       }
     },
     watch: {
+      // 检测data变化改变高度快的数值
       data() {
         setTimeout(() => {
           this._calcu()
         }, 20)
       },
+      // 检测滚动高度来检测
       scrollY(newY) {
         const listHeight = this.listHeight
         // 滚动到上边
