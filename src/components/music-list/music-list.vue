@@ -16,7 +16,7 @@
     <div class="bg-layer" ref="layer"></div>
     <scroll class="list" :data="songs" ref="list" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
       <div class="song-list-wrapper">
-        <songList :songs="songs"></songList>  
+        <songList :songs="songs" @select="selectItem"></songList>  
       </div>  
       <div class="loading-container" v-show="!songs.length">
         <loading></loading>
@@ -29,6 +29,7 @@
   import scroll from '../../base/scroll/scroll'
   import songList from '../../base/song-list/song-list'
   import loading from '../../base/loading/loading'
+  import {mapActions} from 'vuex'
   export default {
     props: {
       bgImage: {
@@ -60,7 +61,17 @@
       },
       scroll(pos) {
         this.scrollY = pos.y
-      }
+      },
+      selectItem(item, index) {
+        console.log(222)
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
+      },
+      ...mapActions([
+        'selectPlay'
+      ])
     },
     components: {
       scroll,
