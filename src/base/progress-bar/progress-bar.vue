@@ -45,7 +45,9 @@
         this.$emit('percentChange', percent)
       },
       progressClick(e) {
-        const offsetWidth = e.offsetX
+        // const offsetWidth = e.offsetX
+        const rect = this.$refs.progressBar.getBoundingClientRect()
+        const offsetWidth = e.pageX - rect.left
         this.$refs.progress.style.width = `${offsetWidth}px`
         this.$refs.progressBtn.style.transform = `translate3d(${offsetWidth}px, 0, 0)`
         const barWidth = this.$refs.progressBar.clientWidth - 16

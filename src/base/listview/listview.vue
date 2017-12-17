@@ -67,6 +67,9 @@
       }
     },
     methods: {
+      refresh() {
+        this.$refs.listview.refresh()
+      },
       // touch开始的事件
       onShortcutTouchStart(e) {
         let anchorIndex = getData(e.target, 'index')
