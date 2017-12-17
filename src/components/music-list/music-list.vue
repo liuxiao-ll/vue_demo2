@@ -29,7 +29,6 @@
   import scroll from '../../base/scroll/scroll'
   import songList from '../../base/song-list/song-list'
   import loading from '../../base/loading/loading'
-  import {mapActions} from 'vuex'
   export default {
     props: {
       bgImage: {
@@ -69,7 +68,8 @@
         })
       },
       ...mapActions([
-        'selectPlay'
+        'selectPlay',
+        'randomPlay'
       ])
     },
     components: {
