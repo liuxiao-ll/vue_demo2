@@ -34,7 +34,7 @@
     methods: {
       handlePlaylist(playList) {
         const bottom = playList.length > 0 ? '60px' : ''
-        this.$refs.singer.$el.style.bottom = bottom
+        this.$refs.singer.style.bottom = bottom
         this.$refs.list.refresh()
       },
       _getSingerList() {
