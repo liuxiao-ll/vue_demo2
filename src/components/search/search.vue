@@ -18,6 +18,7 @@
     <div class="search-result" v-show="query">
       <suggest :query="query"></suggest>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -43,7 +44,6 @@
       _getHotKey() {
         getHotKey().then((res) => {
           if (res.code === 0) {
-            console.log(res)
             this.hotKey = res.data.hotkey.slice(0, 10)
           }
         })
