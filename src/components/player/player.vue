@@ -77,11 +77,12 @@
             <i :class="miniIcon" @click.stop.prevent="togglePlay" class="icon-mini"></i>
           </progressCircle>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlayList">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <playlist ref="playlist"></playlist>
     <audio :src="currentSong.url" ref="audio1" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
@@ -94,6 +95,7 @@
   import {shuffle} from '../../common/js/util.js'
   import Lyric from 'lyric-parser'
   import Scroll from '../../base/scroll/scroll'
+  import playlist from '../playlist/playlist'
   export default {
     computed: {
       playIcon() {
@@ -379,6 +381,9 @@
           length++
         }
         return num
+      },
+      showPlayList() {
+        this.$refs.playlist.show()
       }
     },
     watch: {
@@ -408,7 +413,8 @@
     components: {
       progressBar,
       progressCircle,
-      Scroll
+      Scroll,
+      playlist
     }
   }
 </script>
