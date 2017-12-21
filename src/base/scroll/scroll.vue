@@ -86,7 +86,7 @@
       data() {
         setTimeout(() => {
           this.refresh()
-        })
+        }, 20)
       }
     }
   }

@@ -56,6 +56,9 @@
           }
         })
       },
+      refresh() {
+        this.$refs.suggest.refresh()
+      },
       searchMore() {
         if (!this.hasMore) {
           return
@@ -122,6 +125,7 @@
         } else {
           this.insertSong(item)
         }
+        this.$emit('select')
       },
       ...mapMutations({
         setSinger: 'SET_SINGER'
