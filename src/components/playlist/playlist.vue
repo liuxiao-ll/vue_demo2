@@ -4,14 +4,14 @@
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon"></i>
-            <span class="text"></span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <i class="icon" :class="iconMode" @click="changeMode"></i>
+            <span class="text">{{modeText}}</span>
+            <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
         <scroll class="list-content" :data="sequenceList" ref="listContent">
-          <ul>
-            <li class="item" v-for="(item, index) in sequenceList" @click="selectItem(item, index)" ref="listItem">
+          <transition-group name="list" tag="ul">
+            <li :key="item.id" class="item" v-for="(item, index) in sequenceList" @click="selectItem(item, index)" ref="listItem">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="like">
@@ -21,10 +21,10 @@
                 <i class="icon-delete"></i>
               </span>
             </li>
-          </ul>
+          </transition-group>
         </scroll>
         <div class="list-operate">
-          <div class="add">
+          <div class="add" @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
@@ -33,15 +33,21 @@
           <span>关闭</span>
         </div>
       </div>
+      <confirm ref="confirm" text="是否清空播放列表！" @confirm="cancel"></confirm>
+      <addSong ref="addSong"></addSong>
     </div>
   </transition>
 </template>
 
 <script>
   import {mapGetters, mapMutations, mapActions} from 'vuex'
+  import confirm from '../../base/confirm/confirm'
   import scroll from '../../base/scroll/scroll'
+  import {playerMixin} from '../../common/js/mixin'
+  import addSong from '../add-song/add-song'
 
   export default {
+    mixins: [playerMixin],
     data() {
       return {
         showFlag: false
@@ -64,6 +70,13 @@
         }
         return ''
       },
+      showConfirm() {
+        this.$refs.confirm.show()
+      },
+      cancel() {
+        this.deleteSongList()
+        this.hide()
+      },
       selectItem(item, index) {
         if (this.mode === 2) {
           index = this.playList.findIndex((song) => {
@@ -81,13 +94,20 @@
       },
       deleteOne(item) {
         this.deleteSong(item)
+        if (!this.playList) {
+          this.hide()
+        }
+      },
+      addSong() {
+        this.$refs.addSong.show()
       },
       ...mapMutations({
         'setCurrentIndex': 'SET_CURRENT_INDEX',
         'setPlayingState': 'SET_PLAYING_STATE'
       }),
       ...mapActions([
-        'deleteSong'
+        'deleteSong',
+        'deleteSongList'
       ])
     },
     computed: {
@@ -96,10 +116,15 @@
         'currentSong',
         'playList',
         'mode'
-      ])
+      ]),
+      modeText() {
+        return this.mode === 0 ? '顺序播放' : this.mode === 1 ? '单曲循环' : '随机播放'
+      }
     },
     components: {
-      scroll
+      scroll,
+      confirm,
+      addSong
     },
     watch: {
       currentSong(newSong, oldSong) {

@@ -88,15 +88,17 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import animations from 'create-keyframe-animation'
   import progressBar from '../../base/progress-bar/progress-bar'
   import progressCircle from '../../base/progress-circle/progress-circle'
-  import {shuffle} from '../../common/js/util.js'
   import Lyric from 'lyric-parser'
   import Scroll from '../../base/scroll/scroll'
   import playlist from '../playlist/playlist'
+  import {playerMixin} from '../../common/js/mixin'
+
   export default {
+    mixins: [playerMixin],
     computed: {
       playIcon() {
         return this.playing ? 'icon-pause' : 'icon-play'
@@ -113,17 +115,10 @@
       percent() {
         return this.currentTime / this.currentSong.duration
       },
-      iconMode() {
-        return this.mode === 0 ? 'icon-sequence' : this.mode === 1 ? 'icon-loop' : 'icon-random'
-      },
       ...mapGetters([
         'fullScreen',
-        'playList',
         'currentSong',
-        'playing',
-        'currentIndex',
-        'mode',
-        'sequenceList'
+        'playing'
       ])
     },
     data() {
@@ -142,6 +137,7 @@
     methods: {
       ready() {
         this.songReady = true
+        this.savePlayHistory(this.currentSong)
       },
       onProgressBarChange(percent) {
         const currentTime = this.currentSong.duration * percent
@@ -173,30 +169,8 @@
       isShowMini() {
         this.setFullScreen(!this.fullScreen)
       },
-      changeMode() {
-        const mode = (this.mode + 1) % 3
-        this.setPlayMode(mode)
-        let list = null
-        if (mode === 2) {
-          list = shuffle(this.sequenceList)
-        } else {
-          list = this.sequenceList
-        }
-        this.resetCurrentIndex(list)
-        this.setPlayList(list)
-      },
-      resetCurrentIndex(list) {
-        let index = list.findIndex((item) => {
-          return item.id === this.currentSong.id
-        })
-        this.setCurrentIndex(index)
-      },
       ...mapMutations({
-        setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingState: 'SET_PLAYING_STATE',
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setPlayMode: 'SET_PLAY_MODE',
-        setPlayList: 'SET_PLAYLIST'
+        setFullScreen: 'SET_FULL_SCREEN'
       }),
       next() {
         if (!this.songReady) {
@@ -384,10 +358,16 @@
       },
       showPlayList() {
         this.$refs.playlist.show()
-      }
+      },
+      ...mapActions([
+        'savePlayHistory'
+      ])
     },
     watch: {
       currentSong(newsong, oldsong) {
+        if (!newsong.id) {
+          return
+        }
         if (newsong.id === oldsong.id) {
           return
         }
