@@ -28,6 +28,12 @@
       <div class="search-result" v-show="query">
         <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput"></suggest>
       </div>
+      <topTip ref="topTip">
+        <div class="tip-title">
+          <i class="icon-ok"></i>
+          <span class="text">1首歌曲已经添加到播放队列</span>
+        </div>
+      </topTip>
     </div>
   </transition>
 </template>
@@ -42,6 +48,7 @@
   import Songlist from '../../base/song-list/song-list'
   import Song from '../../common/js/song'
   import searchList from '../../base/search-list/search-list'
+  import topTip from '../../base/top-tip/top-tip'
 
   export default {
     mixins: [searchMixin],
@@ -86,12 +93,17 @@
       },
       selectSong(song, index) {
         if (index !== 0) {
+          console.log('啊啊啊啊')
           this.insertSong(new Song(song))
+          this.showTip()
         }
       },
       ...mapActions([
         'insertSong'
-      ])
+      ]),
+      showTip() {
+        this.$refs.topTip.show()
+      }
     },
     components: {
       searchBox,
@@ -99,7 +111,8 @@
       switches,
       scroll,
       Songlist,
-      searchList
+      searchList,
+      topTip
     },
     computed: {
       ...mapGetters([

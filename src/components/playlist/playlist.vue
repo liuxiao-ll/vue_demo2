@@ -9,13 +9,13 @@
             <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <scroll class="list-content" :data="sequenceList" ref="listContent">
-          <transition-group name="list" tag="ul">
+        <scroll class="list-content" :data="sequenceList" ref="listContent" :refreshDelay="refreshDelay">
+          <transition-group name="list" tag="ul" ref="list">
             <li :key="item.id" class="item" v-for="(item, index) in sequenceList" @click="selectItem(item, index)" ref="listItem">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
-              <span class="like">
-                <i class="icon-not-favorite"></i>
+              <span class="like" @click.stop="toggleFavorite(item)">
+                <i :class="getFavoriteIcon(item)"></i>
               </span>
               <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
@@ -50,7 +50,8 @@
     mixins: [playerMixin],
     data() {
       return {
-        showFlag: false
+        showFlag: false,
+        refreshDelay: 100
       }
     },
     methods: {
@@ -90,7 +91,7 @@
         const index = this.sequenceList.findIndex((song) => {
           return current.id === song.id
         })
-        this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+        this.$refs.listContent.scrollToElement(this.$refs.list.$el.children[index], 300)
       },
       deleteOne(item) {
         this.deleteSong(item)
